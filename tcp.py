@@ -16,12 +16,16 @@ async def getContent():
     if re == "":
       break
     print(re)
+async def Read():
+  return sc.recv(1000)
+async def write(b: bytes):
+  sc.send(b)
 
 
 def Login():
   sc.connect((IP, port))
   asyncio.run(sendLogin())
-  asyncio.run(getContent())
 
 if __name__ == "__main__":
   Login()
+  asyncio.run(getContent())
