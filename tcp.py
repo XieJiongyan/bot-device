@@ -12,14 +12,21 @@ async def sendLogin():
   sc.send(bytes(json.dumps(loginContent), encoding= "utf8"))
 async def getContent():
   while True:
-    re = sc.recv(1000)
+    try:
+      re = sc.recv(1000)
+    except BlockingIOError as e:
+      # print(e)
+      continue
     if re == "" or re == b"":
       break
     print(re)
 def read():
-  r = sc.recv(1000)
-  print("read from net: ", r)
-  return json.loads(r)
+  try:
+    r = sc.recv(1000)
+    print("read from net: ", r)
+    return json.loads(r), True
+  except BlockingIOError as e:
+    return None, False
 def write(n: map):
   b = json.dumps(n)
   print(b)
@@ -27,8 +34,10 @@ def write(n: map):
 
 def Login():
   sc.connect((IP, port))
+  
   asyncio.run(sendLogin())
   re = sc.recv(1000)
+  sc.setblocking(0)
   print(re)
 
 if __name__ == "__main__":
